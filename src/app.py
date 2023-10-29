@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, Response
 from src.config.logging_config import logging
 from src.emailScheduler import start_event_scheduler
+from datetime import datetime
 import json
 import threading
 import re
@@ -22,6 +23,8 @@ def add_event():
         if validation_error:
             return validation_error
         
+        event[c.ID] = _generate_event_hash(event)
+
         _save_to_config(event)
         return jsonify({c.STATUS: c.SUCCESS, c.MESSAGE: "Event added successfully!"}), 200
 
@@ -119,6 +122,9 @@ def _validate_event_from_request(event: dict):
                 return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Invalid time format!"}), 400
         
         return None
+
+def _generate_event_hash(event: dict):
+    return hash(hash(str(event))+ hash(datetime.now()))
 
 if __name__ == "__main__":
     scheduler_thread = threading.Thread(target=start_event_scheduler)
