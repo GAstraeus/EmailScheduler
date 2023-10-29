@@ -63,6 +63,7 @@ TIME_PATTERN = r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"
 TIME_SETUP = "time_setup"
 TO = 'To'
 TYPE = "type"
+W = "w"
 
 # DAYS 
 DAILY = "daily"

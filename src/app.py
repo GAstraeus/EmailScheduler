@@ -65,11 +65,9 @@ def _read_datafile():
     with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
         return json.load(f)
 
-def _write_datafile(config):
-    with open(c.EVENTS_DATA_FILE_PATH, c.R_PLUS) as f:
-        f.seek(0)
-        json.dump(config, f, indent=4)
-        f.truncate()
+def _write_datafile(events):
+    with open(c.EVENTS_DATA_FILE_PATH, c.W) as f:
+        json.dump(events, f, indent=4)
 
 def _add_event_to_events_datafile(event):
     events = _read_datafile()
