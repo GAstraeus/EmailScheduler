@@ -42,6 +42,7 @@ EVENT_NAME = "event_name"
 EVENTS = "events"
 FROM = 'From'
 GET = "GET"
+ID = "id"
 MESSAGE = "message"
 NAME = "name"
 OWNER = "owner"
