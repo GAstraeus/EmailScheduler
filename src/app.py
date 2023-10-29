@@ -50,7 +50,7 @@ def list_events():
     except Exception as e:
         return jsonify({c.STATUS: c.ERROR, c.MESSAGE: str(e)}), 500
 
-@app.route('/deleteEvent', methods=['DELETE'])
+@app.route('/deleteEvent', methods=[c.DELETE])
 def delete_event():
     auth_error = _validate_authorization(request)
     if auth_error:
@@ -77,7 +77,6 @@ def _add_event_to_events_datafile(event):
 def _remove_event_from_events_datafile(event_id):
     events = _read_datafile()
     events[c.EVENTS] = [event for event in events[c.EVENTS] if event.get(c.ID) != int(event_id)]
-    print("New events", events)
     _write_datafile(events)
 
 def _validate_authorization(request):
