@@ -3,15 +3,17 @@ import random
 import time
 import schedule
 import os
-import config.configuration as c
-import helpers.emailClient as emailClient
+import src.config.configuration as c
+import src.helpers.emailClient as emailClient
+from src.config.logging_config import logging
+
 
 def get_file_modified_time(filename):
     return os.path.getmtime(filename)
 
 def random_time_in_range(start_time, end_time):
-    start_hour, start_minute = map(int, start_time.split(":"))
-    end_hour, end_minute = map(int, end_time.split(":"))
+    start_hour, start_minute = map(int, start_time.split(c.COLON))
+    end_hour, end_minute = map(int, end_time.split(c.COLON))
     random_hour = random.randint(start_hour, end_hour)
     random_minute = random.randint(start_minute if random_hour == start_hour else 0, end_minute if random_hour == end_hour else 59)
     return f"{random_hour:02}:{random_minute:02}"
@@ -37,23 +39,22 @@ def schedule_event(event):
 
 
 def start_event_scheduler():
-    config_filename = "data/event_data.json"
-    last_modified_time = get_file_modified_time(config_filename)
+    last_modified_time = get_file_modified_time(c.EVENTS_DATA_FILE_PATH)
 
-    with open(config_filename, c.R) as f:
+    with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
         events = json.load(f)
 
     for event in events[c.EVENTS]:
         schedule_event(event)
 
     while True:
-        current_modified_time = get_file_modified_time(config_filename)
+        current_modified_time = get_file_modified_time(c.EVENTS_DATA_FILE_PATH)
         if current_modified_time != last_modified_time:
-            print("Found new events in config")
+            logging.log("Found new events in config")
             for event in events[c.EVENTS]:
                 schedule.clear(event[c.EVENT_NAME])
             
-            with open(config_filename, c.R) as f:
+            with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
                 events = json.load(f)
             
             for event in events[c.EVENTS]:

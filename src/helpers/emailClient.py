@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
-import config.configuration as c
-from config.logging_config import logging
+import src.config.configuration as c
+from src.config.logging_config import logging
 
 appConfig = c.Config(c.STAGE)
 

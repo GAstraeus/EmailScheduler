@@ -1,5 +1,5 @@
 import configparser
-from config.logging_config import logging
+from src.config.logging_config import logging
 import os
 
 class Config:
@@ -29,30 +29,49 @@ class Config:
 PROD_STAGE = 'Prod'
 DEV_STAGE = 'Dev'
 STAGE = PROD_STAGE
-FROM = 'From'
-SUBJECT = 'Subject'
-TO = 'To'
-OWNER = "owner"
-EVENT_NAME = "event_name"
-MESSAGE = "message"
-RECIPIENT = "recipient"
-SMTP_SERVER = "smtp_server"
-SMTP_PORT = "smtp_port"
-EMAIL = "email"
-PASSWORD = "password"
+EVENTS_DATA_FILE_PATH = "data/event_data.json"
+
 ABSOLUTE = "absolute"
+COLON = ":"
 DAILY = "daily"
 DAYS = "days"
+EMAIL = "email"
 EMAIL_SETTINGS = "email_settings"
 END = "end"
+ERROR = "error"
+EVENT_NAME = "event_name"
 EVENTS = "events"
+FROM = 'From'
+GET = "GET"
+MESSAGE = "message"
 NAME = "name"
+OWNER = "owner"
+PASSWORD = "password"
+POST = "POST"
 R = "r"
+R_PLUS = "r+"
 RANGE = "range"
+RECIPIENT = "recipient"
+SMTP_PORT = "smtp_port"
+SMTP_SERVER = "smtp_server"
 START = "start"
+STATUS = "status"
+SUBJECT = 'Subject'
+SUCCESS = "success"
 TIME = "time"
-TIME_SETUP = "time_setup"
-TYPE = "type"
 TIME_PATTERN = r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"
+TIME_SETUP = "time_setup"
+TO = 'To'
+TYPE = "type"
+
+# DAYS 
+DAILY = "daily"
+MONDAY = "Monday"
+TUESDAY = "Tuesday"
+WEDNESDAY = "Wednesday"
+THURSDAY = "Thursday"
+FRIDAY = "Friday"
+SATURDAY = "Saturday"
+SUNDAY = "Sunday"
 
 logging.debug(f"Using Environment Stage {STAGE}")
