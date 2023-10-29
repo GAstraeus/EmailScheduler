@@ -29,7 +29,6 @@ class Config:
 PROD_STAGE = 'Prod'
 DEV_STAGE = 'Dev'
 STAGE = PROD_STAGE
-EVENTS_DATA_FILE_PATH = "data/event_data.json"
 
 ABSOLUTE = "absolute"
 COLON = ":"
@@ -73,5 +72,9 @@ THURSDAY = "Thursday"
 FRIDAY = "Friday"
 SATURDAY = "Saturday"
 SUNDAY = "Sunday"
+
+EVENTS_DATA_FILE_NAME = "event_data.json"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+EVENTS_DATA_FILE_PATH = os.path.join(current_dir, '..', 'data', EVENTS_DATA_FILE_NAME)
 
 logging.debug(f"Using Environment Stage {STAGE}")
