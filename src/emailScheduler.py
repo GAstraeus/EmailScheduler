@@ -51,8 +51,7 @@ def start_event_scheduler():
         current_modified_time = get_file_modified_time(c.EVENTS_DATA_FILE_PATH)
         if current_modified_time != last_modified_time:
             logging.log("Found new events in config")
-            for event in events[c.EVENTS]:
-                schedule.clear(event[c.EVENT_NAME])
+            schedule.clear()
             
             with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
                 events = json.load(f)

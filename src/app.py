@@ -25,7 +25,7 @@ def add_event():
         
         event[c.ID] = _generate_event_hash(event)
 
-        _save_to_config(event)
+        _add_event_to_events_datafile(event)
         return jsonify({c.STATUS: c.SUCCESS, c.MESSAGE: "Event added successfully!"}), 200
 
     except Exception as e:
@@ -40,24 +40,46 @@ def list_events():
         owner_email = request.args.get('owner')
         if not owner_email:
             return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Owner parameter is missing!"}), 400
+        
+        events = _read_datafile()
 
-        with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
-            config = json.load(f)
-
-        owner_events = [event for event in config[c.EVENTS] if event[c.OWNER] == owner_email]
+        owner_events = [event for event in events[c.EVENTS] if event[c.OWNER] == owner_email]
 
         return jsonify({c.STATUS: c.SUCCESS, c.EVENTS: owner_events}), 200
 
     except Exception as e:
         return jsonify({c.STATUS: c.ERROR, c.MESSAGE: str(e)}), 500
 
-def _save_to_config(event):
+@app.route('/deleteEvent', methods=['DELETE'])
+def delete_event():
+    auth_error = _validate_authorization(request)
+    if auth_error:
+        return auth_error
+    event_id = request.args.get(c.ID)
+    if not event_id:
+        return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Event ID is required!"}), 400
+    _remove_event_from_events_datafile(event_id)
+    return jsonify({"status": "success", "message": "Event deleted successfully!"}), 200
+
+def _read_datafile():
+    with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
+        return json.load(f)
+
+def _write_datafile(config):
     with open(c.EVENTS_DATA_FILE_PATH, c.R_PLUS) as f:
-        config = json.load(f)
-        config[c.EVENTS].append(event)
         f.seek(0)
         json.dump(config, f, indent=4)
         f.truncate()
+
+def _add_event_to_events_datafile(event):
+    events = _read_datafile()
+    events[c.EVENTS].append(event)
+    _write_datafile(events)
+
+def _remove_event_from_events_datafile(event_id):
+    events = _read_datafile()
+    events[c.EVENTS] = [event for event in events[c.EVENTS] if event.get(c.ID) != event_id]
+    _write_datafile(events)
 
 def _validate_authorization(request):
      if not _validate_api_key(request):
