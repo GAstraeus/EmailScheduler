@@ -59,7 +59,7 @@ def delete_event():
     if not event_id:
         return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Event ID is required!"}), 400
     _remove_event_from_events_datafile(event_id)
-    return jsonify({"status": "success", "message": "Event deleted successfully!"}), 200
+    return jsonify({c.STATUS: c.SUCCESS, c.MESSAGE: "Event deleted successfully!"}), 200
 
 def _read_datafile():
     with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
@@ -76,7 +76,8 @@ def _add_event_to_events_datafile(event):
 
 def _remove_event_from_events_datafile(event_id):
     events = _read_datafile()
-    events[c.EVENTS] = [event for event in events[c.EVENTS] if event.get(c.ID) != event_id]
+    events[c.EVENTS] = [event for event in events[c.EVENTS] if event.get(c.ID) != int(event_id)]
+    print("New events", events)
     _write_datafile(events)
 
 def _validate_authorization(request):
