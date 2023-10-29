@@ -53,5 +53,6 @@ START = "start"
 TIME = "time"
 TIME_SETUP = "time_setup"
 TYPE = "type"
+TIME_PATTERN = r"^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$"
 
 logging.debug(f"Using Environment Stage {STAGE}")

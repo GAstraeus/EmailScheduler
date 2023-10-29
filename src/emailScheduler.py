@@ -37,7 +37,7 @@ def schedule_event(event):
 
 
 def start_event_scheduler():
-    config_filename = "data/config.json"
+    config_filename = "data/event_data.json"
     last_modified_time = get_file_modified_time(config_filename)
 
     with open(config_filename, c.R) as f:
