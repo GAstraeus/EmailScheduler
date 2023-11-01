@@ -3,9 +3,18 @@ import random
 import time
 import schedule
 import os
-import src.config.configuration as c
-import src.helpers.emailClient as emailClient
-from src.config.logging_config import logging
+import sys
+
+running_via_gunicorn = 'gunicorn' in sys.argv[0] or 'gunicorn' in sys.modules
+
+if running_via_gunicorn:
+    import src.config.configuration as c
+    import src.helpers.emailClient as emailClient
+    from src.config.logging_config import logging
+else:
+    import config.configuration as c
+    import helpers.emailClient as emailClient
+    from config.logging_config import logging
 
 
 def get_file_modified_time(filename):

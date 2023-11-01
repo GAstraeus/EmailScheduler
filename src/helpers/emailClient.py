@@ -1,7 +1,15 @@
 import smtplib
+import sys
 from email.mime.text import MIMEText
-import src.config.configuration as c
-from src.config.logging_config import logging
+
+running_via_gunicorn = 'gunicorn' in sys.argv[0] or 'gunicorn' in sys.modules
+
+if running_via_gunicorn:
+    import src.config.configuration as c
+    from src.config.logging_config import logging
+else:
+    import config.configuration as c
+    from config.logging_config import logging
 
 appConfig = c.Config(c.STAGE)
 
