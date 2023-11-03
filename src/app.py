@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 import threading
 import re
+import hashlib
 import src.config.configuration as c
 
 appConfig = c.Config(c.STAGE)
@@ -76,7 +77,7 @@ def _add_event_to_events_datafile(event):
 
 def _remove_event_from_events_datafile(event_id):
     events = _read_datafile()
-    events[c.EVENTS] = [event for event in events[c.EVENTS] if event.get(c.ID) != int(event_id)]
+    events[c.EVENTS] = [event for event in events[c.EVENTS] if event.get(c.ID) != event_id]
     _write_datafile(events)
 
 def _validate_authorization(request):
@@ -144,7 +145,11 @@ def _validate_event_from_request(event: dict):
         return None
 
 def _generate_event_hash(event: dict):
-    return hash(hash(str(event))+ hash(datetime.now()))
+    md5_hash = hashlib.md5()
+    event_string = str(event)+str(datetime.now)
+    md5_hash.update(event_string.encode('utf-8'))
+    hex_dig_hash = md5_hash.hexdigest()
+    return hex_dig_hash
 
 if __name__ == "__main__":
     scheduler_thread = threading.Thread(target=start_event_scheduler)

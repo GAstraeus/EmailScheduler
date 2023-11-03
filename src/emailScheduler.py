@@ -59,7 +59,7 @@ def start_event_scheduler():
     while True:
         current_modified_time = get_file_modified_time(c.EVENTS_DATA_FILE_PATH)
         if current_modified_time != last_modified_time:
-            logging.log("Found new events in config")
+            logging.info("Found new events in config")
             schedule.clear()
             
             with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
