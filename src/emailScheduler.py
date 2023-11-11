@@ -4,6 +4,7 @@ import time
 import schedule
 import os
 import sys
+import datetime
 
 running_via_gunicorn = 'gunicorn' in sys.argv[0] or 'gunicorn' in sys.modules
 
@@ -46,6 +47,10 @@ def schedule_event(event):
             else:
                 getattr(schedule.every(), day.lower()).at(random_time).do(task)
 
+def is_reschedule_time():
+    now = datetime.datetime.now()
+    return now.hour == 2 and now.minute == 2
+
 
 def start_event_scheduler():
     last_modified_time = get_file_modified_time(c.EVENTS_DATA_FILE_PATH)
@@ -58,7 +63,7 @@ def start_event_scheduler():
 
     while True:
         current_modified_time = get_file_modified_time(c.EVENTS_DATA_FILE_PATH)
-        if current_modified_time != last_modified_time:
+        if current_modified_time != last_modified_time or is_reschedule_time():
             logging.info("Found new events in config")
             schedule.clear()
             
