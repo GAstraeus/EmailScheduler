@@ -151,7 +151,7 @@ def _validate_event_from_request(event: dict):
             if not time_setup[c.TIME]:
                 return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "No start time provided!"}), 400
         
-            if not re.match(c.TIME_PATTERN, time_setup[c.TIME_PATTERN]):
+            if not re.match(c.TIME_PATTERN, time_setup[c.TIME]):
                 return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Invalid time format!"}), 400
         
         return None
