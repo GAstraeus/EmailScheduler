@@ -34,6 +34,10 @@ class Config:
         self.password = config[env]['password']
         self.api_key = config[env]['api_key']
         self._is_init = True
+        if env == PROD_STAGE:
+            self.url = "http://localhost:8123"
+        else:
+            self.url = "http://localhost:8123"
 
 
 PROD_STAGE = 'Prod'
@@ -43,6 +47,7 @@ STAGE = PROD_STAGE
 ABSOLUTE = "absolute"
 COLON = ":"
 DAILY = "daily"
+DATE = "date"
 DAYS = "days"
 DELETE = "DELETE"
 EMAIL = "email"
@@ -75,6 +80,7 @@ TIME_SETUP = "time_setup"
 TO = 'To'
 TYPE = "type"
 W = "w"
+X_API_KEY = 'X-API-KEY'
 
 # DAYS 
 DAILY = "daily"

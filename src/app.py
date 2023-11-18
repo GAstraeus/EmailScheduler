@@ -86,7 +86,7 @@ def _validate_authorization(request):
      return None
      
 def _validate_api_key(request):
-    return request.headers.get('X-API-KEY') ==  appConfig.api_key
+    return request.headers.get(c.X_API_KEY) ==  appConfig.api_key
 
 def _validate_event_from_request(event: dict):
         valid_attributes = {c.EVENT_NAME, c.MESSAGE, c.RECIPIENT, c.OWNER, c.TIME_SETUP}
@@ -114,13 +114,25 @@ def _validate_event_from_request(event: dict):
         if not all(time_attributes in time_setup for time_attributes in ("days", "type")):
             return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Missing required time setup fields!"}), 400
         
-        if time_setup[c.TYPE] not in (c.ABSOLUTE, c.RANGE):
+        if time_setup[c.TYPE] not in (c.ABSOLUTE, c.RANGE, c.DATE):
             return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "time_setup type field not valid!"}), 400
-
-        valid_days = [c.DAILY, c.MONDAY, c.TUESDAY, c.WEDNESDAY, c.THURSDAY, c.FRIDAY, c.SATURDAY, c.SUNDAY]
-        if not all(day in valid_days for day in time_setup[c.DAYS]):
-            return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Invalid days provided!"}), 400
         
+
+        if time_setup[c.TYPE] == c.ABSOLUTE or time_setup[c.TYPE] == c.RANGE:
+            valid_days = [c.DAILY, c.MONDAY, c.TUESDAY, c.WEDNESDAY, c.THURSDAY, c.FRIDAY, c.SATURDAY, c.SUNDAY]
+            if not all(day in valid_days for day in time_setup[c.DAYS]):
+                return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Invalid days provided!"}), 400
+        elif time_setup[c.TYPE] == c.DATE:
+            if len(time_setup[c.DAYS]) > 1:
+                return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Only one date allowed!"}), 400
+            try:
+                input_date = datetime.strptime(time_setup[c.DAYS][0], '%Y-%m-%d').date()
+                today = datetime.today().date()
+                if input_date < today:
+                    return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Date should not be in the past!"}), 400
+            except ValueError:
+                return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Date should have format %Y-%m-%d!"}), 400
+
         if time_setup[c.TYPE] == c.RANGE:
             if not time_setup[c.START]:
                 return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "No start time provided!"}), 400
@@ -135,11 +147,11 @@ def _validate_event_from_request(event: dict):
             if start_time >= end_time:
                 return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Start time must be earlier than end time!"}), 400
             
-        elif time_setup[c.TIME] == c.ABSOLUTE:
+        elif time_setup[c.TYPE] == c.ABSOLUTE or time_setup[c.TYPE] == c.DATE:
             if not time_setup[c.TIME]:
                 return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "No start time provided!"}), 400
         
-            if not re.match(c.TIME_PATTERN, time_setup[c.TIME_PATTERN]):
+            if not re.match(c.TIME_PATTERN, time_setup[c.TIME]):
                 return jsonify({c.STATUS: c.ERROR, c.MESSAGE: "Invalid time format!"}), 400
         
         return None

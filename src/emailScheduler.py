@@ -11,10 +11,12 @@ running_via_gunicorn = 'gunicorn' in sys.argv[0] or 'gunicorn' in sys.modules
 if running_via_gunicorn:
     import src.config.configuration as c
     import src.helpers.emailClient as emailClient
+    import src.helpers.event_server_client as serviceClient
     from src.config.logging_config import logging
 else:
     import config.configuration as c
     import helpers.emailClient as emailClient
+    import helpers.event_server_client as serviceClient
     from config.logging_config import logging
 
 
@@ -31,6 +33,8 @@ def random_time_in_range(start_time, end_time):
 def schedule_event(event):
     def task():
         emailClient.send_email(event[c.OWNER], json.dumps({c.EVENT_NAME: event[c.EVENT_NAME], c.MESSAGE: event[c.MESSAGE], c.RECIPIENT: event[c.RECIPIENT],}))
+        if event[c.TIME_SETUP][c.TYPE] == c.DATE:
+            serviceClient.deleteEvent(event[c.ID])
 
 
     if event[c.TIME_SETUP][c.TYPE] == c.ABSOLUTE:
@@ -46,6 +50,12 @@ def schedule_event(event):
                 schedule.every().day.at(random_time).do(task)
             else:
                 getattr(schedule.every(), day.lower()).at(random_time).do(task)
+    elif event[c.TIME_SETUP][c.TYPE] == c.DATE:
+        event_date = datetime.datetime.strptime(event[c.TIME_SETUP][c.DAYS][0], '%Y-%m-%d').date()
+        today = datetime.datetime.today().date()
+        if event_date == today:
+            schedule.every().day.at(event[c.TIME_SETUP][c.TIME]).do(task).tag('once')
+            
 
 def is_reschedule_time():
     now = datetime.datetime.now()
@@ -70,6 +80,7 @@ def start_event_scheduler():
             with open(c.EVENTS_DATA_FILE_PATH, c.R) as f:
                 events = json.load(f)
             
+            logging.info(f"Scheduling {len(events[c.EVENTS])} events")
             for event in events[c.EVENTS]:
                 schedule_event(event)
 
