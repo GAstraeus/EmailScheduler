@@ -47,6 +47,7 @@ STAGE = PROD_STAGE
 ABSOLUTE = "absolute"
 COLON = ":"
 DAILY = "daily"
+DATE = "date"
 DAYS = "days"
 DELETE = "DELETE"
 EMAIL = "email"
@@ -79,7 +80,7 @@ TIME_SETUP = "time_setup"
 TO = 'To'
 TYPE = "type"
 W = "w"
-DATE = "date"
+X_API_KEY = 'X-API-KEY'
 
 # DAYS 
 DAILY = "daily"
